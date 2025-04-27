@@ -2,7 +2,7 @@ import random
 
 
 def generate_map(size):
-    # Генерация карты
+    # Генерация карты (двумерный список)
     game_map = [['.' for _ in range(size)] for _ in range(size)]
     objects = ['T', 'B', 'W', 'R', 'A']
     weights = [0.1, 0.1, 0.05, 0.1, 0.05]  # Вероятности появления объектов
@@ -16,7 +16,7 @@ def generate_map(size):
 
 
 def print_map(game_map, player):
-    # Вывод карты
+    # Вывод карты с символами (@, T, B, W, ., R, A, S)
     for i in range(len(game_map)):
         for j in range(len(game_map[0])):
             if i == player.y and j == player.x:
