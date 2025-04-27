@@ -8,14 +8,14 @@ from environment import Environment, update_environment
 def main():
     # Инициализация игры
     map_size = 20
-    game_map = generate_map(map_size)
+    game_map = generate_map(map_size)  # Исправлено: передаем map_size
     player = Player(map_size // 2, map_size // 2)
     env = Environment()
 
     turn = 0
     while True:
         # Отображение карты и состояния
-        print_map(game_map, player)
+        print_map(game_map, player, env)
         print(
             f"Голод: {player.hunger}, Жажда: {player.thirst}, Энергия: {player.energy}, Температура: {player.temperature}")
         print(f"Время: {env.time_of_day}, Погода: {env.weather}, Ход: {turn}")
@@ -40,17 +40,20 @@ def main():
 
         # Обновление параметров игрока
         player.hunger = max(0, player.hunger - 1)
-        player.thirst = max(0, player.thirst - 2)
+        thirst_decrement = 1 if env.weather == "Дождь" else 2  # Дождь замедляет жажду
+        player.thirst = max(0, player.thirst - thirst_decrement)
         player.energy = max(0, player.energy - 1)
 
         # Влияние погоды и времени суток на температуру
         temp_change = 0
         if env.time_of_day == "Ночь":
-            temp_change -= 2
+            temp_change -= 3  # Ночь: сильнее охлаждает
+        elif env.time_of_day in ["Утро", "Вечер"]:
+            temp_change -= 1  # Утро и вечер: слабое охлаждение
         if env.weather == "Дождь":
-            temp_change -= 1
+            temp_change -= 2
         elif env.weather == "Снег":
-            temp_change -= 3
+            temp_change -= 4
         if player.in_shelter:
             temp_change += 2  # Шалаш защищает от холода
         player.temperature = max(0, min(100, player.temperature + temp_change))

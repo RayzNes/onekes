@@ -1,4 +1,5 @@
 import random
+from math import sqrt
 
 
 def generate_map(size):
@@ -15,12 +16,18 @@ def generate_map(size):
     return game_map
 
 
-def print_map(game_map, player):
-    # Вывод карты с символами (@, T, B, W, ., R, A, S)
-    for i in range(len(game_map)):
-        for j in range(len(game_map[0])):
-            if i == player.y and j == player.x:
-                print('@', end=' ')
+def print_map(game_map, player, env):
+    # Вывод карты с учетом видимости ночью
+    size = len(game_map)
+    for i in range(size):
+        for j in range(size):
+            # Расстояние от игрока
+            distance = sqrt((player.x - j) ** 2 + (player.y - i) ** 2)
+            if env.time_of_day == "Ночь" and distance > 2:
+                print('?', end=' ')  # Не видно дальше 2 клеток ночью
             else:
-                print(game_map[i][j], end=' ')
+                if i == player.y and j == player.x:
+                    print('@', end=' ')
+                else:
+                    print(game_map[i][j], end=' ')
         print()
